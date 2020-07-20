@@ -6,7 +6,6 @@
 interface BaseResult<V, E> {
   isOk(): this is Ok<V>;
   isErr(): this is Err<E>;
-  match<VR, ER>(matcher: Matcher<V, VR, E, ER>): Result<VR, ER>;
 
   /**
    * Returns the contained `Ok` value.
@@ -17,7 +16,7 @@ interface BaseResult<V, E> {
 }
 
 export type Result<V, E> = (Ok<V> | Err<E>) & {
-  //map<V extends Result<any, any>, X>(result: V, fn: (v: ResultOk<V>) => X): Result<X, ResultErr<V>>
+  match<VR, ER>(matcher: Matcher<V, VR, E, ER>): Result<VR, ER>;
 };
 
 // type ResultOk<V extends Result<any, any>> = V extends Result<infer OK, any> ? OK : never;
@@ -33,6 +32,7 @@ export interface Ok<V> extends BaseResult<V, any> {
   isErr(): false;
   value(): V;
   unwrap(): V;
+  match<VR, ER>(matcher: Matcher<V, VR, any, ER>): Result<VR, ER>;
 }
 
 /** The `Err` type.
@@ -44,7 +44,9 @@ export interface Err<E> extends BaseResult<any, E> {
   isErr(): this is Err<E>;
   error(): E;
   unwrap(): never;
+  match<VR, ER>(matcher: Matcher<any, VR, E, ER>): Result<VR, ER>;
 }
+
 
 /** A type representing a branch between Ok and Error.
  * 
