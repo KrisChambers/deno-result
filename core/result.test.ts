@@ -1,5 +1,5 @@
 import { assert, assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { Result, Ok, Err, ResultReturnType } from "../core/result.ts";
+import { Result, Ok, Err } from "../core/result.ts";
 
 Deno.test("Creating Results", () => {
   const a: Result<number, string> = Ok(2);
@@ -18,7 +18,7 @@ Deno.test("Creating Results", () => {
 });
 
 Deno.test("Matching on Results", () => {
-  const a = Ok<number, string>(2)
+  const a: Result<string, string> = Ok(2)
     .match({
       ok: (v) => (v * 2).toString(),
       err: (e) => e,
@@ -27,11 +27,12 @@ Deno.test("Matching on Results", () => {
   assert(a.isOk());
   assertEquals(a.value(), "4");
 
-  const b = Err<number, number>(2)
+  const b: Result<string, string> = Err(2)
     .match({
       ok: (v) => v,
       err: (e) => (e * 5).toString(),
     });
+
   assert(b.isErr());
   assertEquals(b.error(), "10");
 });
